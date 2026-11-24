@@ -1,0 +1,653 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="referrer" content="no-referrer"><title>BantayBayad PH</title></head><body>
+<main id="gastos-demo">
+<header><span class="mark">₱</span><div><strong>BantayBayad PH</strong><small>Bills payment tracker</small></div><button id="gt-home" type="button">Home</button><button id="gt-theme" type="button" aria-label="Switch color mode"></button></header>
+<div class="demo-switch" aria-label="Bill collection"><button id="gt-empty" type="button" aria-pressed="true">My bills</button><button id="gt-sample" type="button" aria-pressed="false">Sample bills</button></div><section class="hero"><small>MONTHLY OUTSTANDING</small><strong id="gt-total">₱3,649.00</strong><span id="gt-caption">2 unpaid bills</span></section>
+<section class="hero" aria-label="Monthly summary"><strong style="font-size:16px">Monthly summary</strong>
+<div class="month-nav"><button type="button" id="gt-prev" aria-label="Previous month">‹ Previous</button><button type="button" id="gt-month" title="Return to this month"></button><button type="button" id="gt-next" aria-label="Next month">Next ›</button></div>
+
+<p id="gt-month-summary" aria-live="polite"></p>
+</section><button class="primary" id="gt-add">+ Add Biller</button>
+<section id="gt-categories" aria-label="Choose a bill category" hidden></section><form id="gt-form" hidden>
+<h3 id="gt-title">Add bill</h3>
+<p class="notice">Biller names only. Never enter credit card numbers, account numbers, or personal information. This tracker only records payments.</p>
+<label>Category<select id="gt-category"></select></label>
+<details id="gt-picker"><summary id="gt-choice">Choose biller</summary><label id="gt-search-label">Search billers<input type="search" id="gt-search" autocomplete="off"></label><div id="gt-options"></div><button type="button" id="gt-custom">+ Add Biller</button><label id="gt-custom-label" hidden>Company or biller name<input id="gt-name" maxlength="45" autocomplete="off"></label></details>
+<label style="display:flex;align-items:center;gap:6px"><input name="autopay" type="checkbox" style="width:auto;min-height:0"> Autopay</label><small>Choose the payment platform under Mode of payment. Mark the bill paid after the payment is confirmed.</small><div class="fields"><label>Amount (₱)<input name="amount" type="number" min="0.01" step="0.01" placeholder="Optional"></label><label>Due date<input name="due" type="date" required></label><label>Payment date<input name="paid" type="date"></label><label>Payment time<input name="paidTime" type="time" readonly></label><label>Mode of payment<select name="mode"><option value="">Select a mode</option><option>GCash</option><option>Maya</option><option>Bank transfer</option><option>Cash</option><option>Card</option><option>Other</option></select></label><label id="gt-other-mode" hidden>Payment method used<input name="otherMode" maxlength="60" placeholder="Enter payment method"></label></div>
+<label style="display:flex;align-items:center"><input style="width:auto;min-height:0" name="recurring" type="checkbox"> Repeat monthly</label>
+<small>Monthly bills appear in future months automatically. Edit any occurrence to change that month’s amount only. Paid entries can be edited to correct their recorded amount. Deleting a recurring bill removes future unpaid occurrences.</small>
+<p id="gt-error" role="alert"></p><button class="primary">Save bill</button> <button type="button" id="gt-delete" hidden>Delete bill</button> <button type="button" id="gt-cancel">Cancel</button>
+</form>
+<section id="gt-reminders" class="notice" role="status" hidden></section><nav aria-label="Bills views"><button data-view="late" aria-pressed="false">Late</button><button data-view="upcoming" aria-pressed="false">Upcoming</button><button data-view="paid" aria-pressed="false">Paid</button><button data-view="all" aria-pressed="true">All Bills</button></nav>
+<div id="gt-list" aria-live="polite"></div>
+<details class="tools"><summary>Tools</summary>
+<button type="button" id="gt-download">Download Backup</button><button type="button" id="gt-share-backup">Save or Share Backup</button><small>On iPhone, choose Save to Files or Drive in the share sheet.</small>
+<button type="button" id="gt-upload" aria-controls="gt-import">Upload Backup</button>
+<button type="button" id="gt-help" aria-expanded="false" aria-controls="gt-guide">Help</button>
+<section id="gt-import" hidden><label>Choose a BantayBayad backup file<input type="file" id="gt-file"></label><p id="gt-import-status" role="status"></p><button type="button" id="gt-restore" hidden>Replace my bills</button> <button type="button" id="gt-import-cancel">Cancel</button></section>
+</details>
+<section id="gt-guide" class="notice" hidden><strong>How to use BantayBayad PH</strong><ol><li>Tap Add bill, choose a biller, and enter the amount and due date.</li><li>Tap a bill to edit it or record a payment. Swipe left on a bill to delete it, or use Delete in its actions menu.</li><li>Download Backup to save a copy. Upload Backup replaces the current bills after you confirm.</li></ol><p>Use biller names only. Keep your backup private.</p></section>
+<p id="gt-saved" role="status" aria-atomic="true"></p><p id="gt-feedback" role="status" hidden></p>
+<footer>Your records are saved in this browser. Keep a backup before clearing browser data.</footer>
+</main>
+<style>
+#gastos-demo{color-scheme:light dark;--ink:light-dark(#15392e,#e4faf1);--paper:light-dark(#ffffff,#202529);--line:light-dark(#d9dfe3,#4b555c);--soft:light-dark(#f1f4f6,#30383d);--accent:light-dark(#17664f,#99edca);max-width:430px;margin:auto;padding:18px;border-radius:23px;background:var(--paper);color:var(--ink);border:1px solid var(--line);font:15px/1.45 system-ui,sans-serif}
+#gastos-demo *{box-sizing:border-box} #gastos-demo [hidden]{display:none!important} #gastos-demo header,#gastos-demo nav,#gastos-demo article{display:flex;align-items:center;gap:9px} #gastos-demo small,#gastos-demo footer{display:block;font-size:12px} #gastos-demo .mark{background:var(--soft);border-radius:11px;padding:7px 13px;font-size:20px} #gastos-demo .demo{margin-left:auto;font-size:11px;letter-spacing:.12em} #gastos-demo .hero{margin:16px 0 12px;padding:15px;border-radius:15px;background:var(--soft)} #gastos-demo .hero strong{display:block;font-size:28px} #gastos-demo nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px} #gastos-demo nav button{min-width:0;font-size:12px;line-height:1.15;padding:5px 2px;white-space:normal} #gastos-demo .tools{display:flex;flex-wrap:wrap;gap:5px;margin-top:12px} #gastos-demo .tools button{font-size:12px} #gastos-demo button,#gastos-demo input,#gastos-demo select,#gastos-demo summary{font:inherit;color:inherit;border:1px solid var(--line);background:var(--paper);border-radius:9px;padding:8px;min-height:42px} #gastos-demo [aria-pressed=true],#gastos-demo .primary{background:var(--accent);color:var(--paper);border-color:transparent} #gastos-demo article{padding:10px 0;border-bottom:1px solid var(--line);justify-content:space-between;flex-wrap:wrap} #gastos-demo article button{max-width:100%;text-align:left;overflow-wrap:anywhere} #gastos-demo article div{text-align:right;margin-left:auto} #gastos-demo footer{margin-top:13px} #gt-list>details{margin-top:5px} #gt-list>details>small{padding:6px 9px} #gt-add{margin-top:12px;width:100%} #gastos-demo form{margin-top:14px;border-top:1px solid var(--line)} #gastos-demo .notice{background:var(--soft);padding:10px;border-radius:9px} #gastos-demo label{display:grid;gap:3px;margin:7px 0;min-width:0} #gastos-demo input,#gastos-demo select{width:100%;min-width:0;font-size:16px} #gastos-demo .fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 8px} #gt-options{display:flex;gap:5px;flex-wrap:wrap;margin:6px 0} #gt-error{color:light-dark(#973c31,#ffb3aa)} #gastos-demo .late{color:light-dark(#973c31,#ffb3aa)}
+#gastos-demo .demo-switch{display:flex;gap:5px;margin-top:10px}
+#gastos-demo .demo-switch button{font-size:12px}
+#gastos-demo .category-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px 3px}
+#gastos-demo .category-grid button{display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0;min-height:66px;padding:4px 0;border:0;font-size:11px;overflow-wrap:anywhere;text-align:center}
+#gastos-demo .category-icon{display:grid;place-items:center;width:35px;height:35px;border-radius:50%;background:var(--accent);color:var(--paper)}
+#gastos-demo .urgent{margin-top:9px;padding:1px 10px 7px;border-radius:12px;background:light-dark(#fff0ec,#422722);color:light-dark(#973c31,#ffb3aa)}
+#gastos-demo .urgent button{color:inherit}
+#gastos-demo .paid-bill,#gastos-demo .paid-bill button{color:light-dark(#1758a2,#9bcbff)}
+#gastos-demo .category-icon{background:#2368ad;color:#fff}
+#gastos-demo .category-icon:is([data-category="Electricity"],[data-category="Cable & Internet"],[data-category="Credit Card"],[data-category="Loan"]){background:#a94d0d}
+#gastos-demo .category-icon[data-category="Water"] span{width:11px;height:14px;background:currentColor;border-radius:70% 55% 65% 65%;transform:rotate(45deg);border-top-left-radius:0}
+#gastos-demo .month-nav{display:grid;grid-template-columns:auto 1fr auto;gap:4px;margin-top:6px}
+#gastos-demo .month-nav button{font-size:12px;padding:5px}
+#gastos-demo .bill-actions{display:flex;gap:4px;margin:0;text-align:left}
+#gastos-demo .bill-actions button{font-size:11px;padding:3px 8px;min-height:32px}
+#gastos-demo article .bill-controls{margin:0;text-align:left}
+#gt-saved{position:fixed;z-index:10;top:50%;left:50%;transform:translate(-50%,-50%);margin:0;padding:14px 24px;border-radius:12px;background:#17664f;color:white;font-weight:700;pointer-events:none}
+#gt-saved:empty{padding:0}
+#gastos-demo .recurring-icon svg{width:1em;height:1em;vertical-align:-.13em}
+#gastos-demo .bill-actions button[data-action='Edit']{color:light-dark(#1758a2,#9bcbff)}
+#gastos-demo .bill-actions button[data-action='Delete']{color:light-dark(#a32924,#ffb3aa)}
+body{margin:0;padding:clamp(4px,1.5vw,12px)}
+#gastos-demo{box-sizing:border-box;width:100%;padding:clamp(8px,3vw,16px);border-radius:16px;overflow-wrap:anywhere}
+#gastos-demo .hero{margin:9px 0;padding:9px 10px}
+#gastos-demo .hero strong{font-size:clamp(20px,6vw,26px)}
+#gastos-demo h3{margin:8px 0 4px}
+#gt-month-summary{margin:5px 0 0;font-size:13px}
+#gastos-demo article{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,auto);gap:5px;padding:5px 0}
+#gastos-demo article .bill-controls{min-width:0}
+#gastos-demo .bill-controls>button{background:transparent;border:0;min-height:32px;padding:3px 4px;font-size:14px;font-weight:600}
+#gastos-demo .bill-actions button{background:transparent;border:0;padding:3px 5px}
+#gastos-demo article small{line-height:1.25}
+#gastos-demo nav{gap:3px}
+#gastos-demo nav button{font-size:clamp(10px,3vw,12px);padding:3px 2px}
+#gastos-demo .month-nav button{min-width:0;padding:4px 2px}
+#gastos-demo .category-grid button{min-height:56px}
+#gastos-demo #gt-add{margin-top:7px}
+#gastos-demo .tools{margin-top:7px}
+#gastos-demo .tools button{padding:4px 6px}
+@media(max-width:360px){
+ #gastos-demo article{grid-template-columns:minmax(0,1fr) minmax(0,44%)}
+ #gastos-demo article small{font-size:11px}
+}
+#gastos-demo #gt-theme{margin-left:auto;min-width:42px}
+#gastos-demo .category-heading{display:flex;align-items:center;gap:8px;margin:8px 0}
+#gastos-demo .category-heading input{flex:1;min-width:0}
+#gastos-demo #gt-home{margin-left:auto;font-size:12px}
+#gastos-demo #gt-theme{margin-left:0}
+#gastos-demo .biller-suggestions{display:grid;gap:4px;margin-bottom:8px}
+#gastos-demo .biller-suggestions button{text-align:left}
+#gastos-demo .bill-actions{flex-wrap:wrap}
+#gastos-demo header{flex-wrap:wrap}
+#gastos-demo header>div{flex:1 1 110px;min-width:0}
+#gastos-demo #gt-home{margin-left:0}
+#gastos-demo .hero{text-align:center}
+#gastos-demo .month-nav{margin:0 0 8px}
+#gastos-demo #gt-add{margin:0 0 8px;width:auto}
+#gastos-demo .bill-actions{align-items:center}
+#gastos-demo .bill-actions summary{padding:0 8px;min-height:32px}
+#gastos-demo .bill-actions details[open]{display:grid}
+#gastos-demo .fields input,#gastos-demo .fields select{max-width:100%;min-width:0}
+#gastos-demo .tools summary{width:max-content}
+@media(max-width:340px){#gastos-demo .fields{grid-template-columns:minmax(0,1fr)}}
+#gastos-demo .swipe-row{position:relative;touch-action:pan-y pinch-zoom}
+#gastos-demo .swipe-delete{position:absolute;inset:4px 0 4px auto;z-index:1;background:#a32924;color:white;padding:0 14px}
+</style>
+<script>
+(() => {
+const root=document.getElementById('gastos-demo');
+const find=id=>root.querySelector('#gt-'+id);
+const catalog={
+'Water':['Water District','Baguio Water District','Maynilad'],
+'Electricity':['BENECO','Meralco'],
+'Cable & Internet':['PLDT','Converge','Sky','Globe','DITO','Globe GFiber','Cignal'],
+'Streaming apps':['Netflix','Prime Video','Disney+','HBO Max'],
+'Subscriptions':['Canva','Claude','ChatGPT','CapCut'],
+'Credit Card':['BPI','Metrobank','UnionBank'],
+'Government':['SSS','PhilHealth','Pag-IBIG','Pag-IBIG MP2','Tax'],
+'Insurance':[],
+'Loan':['SLoan','Lazada FastCash Credit','TikTok TrustLoan'],
+'Shopping':['Shopee PayLater','Lazada PayLater','TikTok PayLater'],
+'Others':[]
+};
+const todayPH=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Manila',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+const dateOffset=days=>new Date(Date.parse(todayPH())+days*86400000).toISOString().slice(0,10);
+const sampleMethods=['GCash','Maya','Bank transfer','Cash','Card'];
+const sampleBillers=Object.entries(catalog).map(([category,names])=>
+ ({category,names:names.length?names:['Sample insurer']}));
+const sample=['upcoming','late','paid'].flatMap((state,group)=>
+ sampleMethods.slice(0,3).map((mode,index)=>{
+  const {category,names}=sampleBillers[group*5+index<10?group*5+index:index+2];
+  const recurring=state==='upcoming'&&index===0;
+  return {name:recurring?'Netflix':names[0],category:recurring?'Streaming apps':category,amount:350+group*140+index*275,
+   due:dateOffset(state==='upcoming'?index+1:-index-2),
+   paid:state==='paid'?dateOffset(-index-2):'',mode:state==='paid'?mode:'',recurring};
+ }));
+const status=b=>b.paid?(b.paid>b.due?'Paid late':'Paid'):b.due<todayPH()?'Overdue':b.due===todayPH()?'Due today':'Upcoming';
+const readAmount=value=>value===null||value.trim()===''?null:Number(value);
+const displayAmount=value=>value==null?'Amount pending':money.format(value);
+const money=new Intl.NumberFormat('en-PH',{style:'currency',currency:'PHP'});
+const date=s=>new Intl.DateTimeFormat('en-PH',{month:'short',day:'numeric',timeZone:'UTC'}).format(new Date(s));
+let view='all', chosen='', editing=null;
+const storageKey='bantaybayad-ph-v1';
+let bills=[], ownBills=[], demo=false;
+function commit(next){
+ if(!demo){
+  try{localStorage.setItem(storageKey,JSON.stringify(next));}
+  catch{feedback('Could not save to this browser. Your previous records are unchanged.');return false;}
+  ownBills=next;
+ }
+ bills=next;
+ return true;
+}
+const icons=['','ϟ','⌁','▣','↻','▤','🏛','✓','₱','🛒','+'];
+const form=find('form'), category=find('category');
+Object.keys(catalog).forEach(c=>category.add(new Option(c,c)));
+function categoryTiles(){
+ let customQuery='';
+   const title=document.createElement('h3'), grid=document.createElement('div');
+   title.textContent='Categories';grid.className='category-grid';
+   Object.keys(catalog).forEach((name,index)=>{
+    const tile=document.createElement('button'), circle=document.createElement('span'), icon=document.createElement('span');
+    circle.className='category-icon';circle.dataset.category=name;icon.textContent=icons[index];icon.setAttribute('aria-hidden','true');
+    circle.append(icon);tile.append(circle,document.createTextNode(name));
+    tile.onclick=()=>{find('categories').hidden=true;open(null);category.value=name;category.onchange();find('picker').open=true;if(customQuery){find('custom').click();find('name').value=customQuery;}else find('choice').focus();};
+    grid.append(tile);
+   });
+   const heading=document.createElement('div'), search=document.createElement('input');
+   heading.className='category-heading';
+   const suggestions=document.createElement('div');
+   suggestions.className='biller-suggestions';
+   suggestions.hidden=true;
+   search.type='search';search.placeholder='Search biller';search.setAttribute('aria-label','Search biller');
+   search.oninput=()=>{
+    customQuery='';
+    const query=search.value.trim().toLowerCase();
+    suggestions.replaceChildren();
+    suggestions.hidden=!query;
+    grid.hidden=Boolean(query);
+    if(!query)return;
+    for(const [categoryName,names] of Object.entries(catalog)){
+     for(const name of names.filter(biller=>biller.toLowerCase().includes(query))){
+      const button=document.createElement('button');
+      button.type='button';button.textContent=name+' · '+categoryName;
+      button.onclick=()=>{
+       open(null);category.value=categoryName;category.onchange();
+       chosen=name;find('choice').textContent=name;
+       form.elements.amount.focus();
+      };
+      suggestions.append(button);
+     }
+    }
+    if(!suggestions.children.length){
+     const message=document.createElement('span'), add=document.createElement('button');
+     message.textContent='No matches found';message.setAttribute('role','status');
+     add.type='button';add.textContent='+ Add Biller';
+     add.onclick=()=>{
+      customQuery=search.value.trim().slice(0,45);
+      grid.hidden=false;
+      suggestions.replaceChildren();
+      message.textContent='Choose a category for your new biller.';
+      suggestions.append(message);
+      grid.querySelector('button').focus();
+     };
+     suggestions.append(message,add);
+    }
+   };
+   heading.append(title,search);
+   return [heading,grid,suggestions];
+
+}
+let monthOffset=0;
+function selectedMonth(){
+ const month=new Date(todayPH().slice(0,7)+'-01T00:00:00Z');
+ month.setUTCMonth(month.getUTCMonth()+monthOffset);
+ return month;
+}
+function renderMonth(){
+ const month=selectedMonth();
+ const key=month.toISOString().slice(0,7);
+ const label=new Intl.DateTimeFormat('en-PH',{month:'short',year:'numeric',timeZone:'UTC'}).format(month);
+ find('month').textContent=monthOffset===0?'This month · '+label:label;
+ const due=bills.filter(b=>b.due.startsWith(key));
+ if(demo&&monthOffset>0&&monthOffset<=3){
+  for(const bill of bills.filter(b=>b.recurring)){
+   let date=bill.due;
+   while(date.slice(0,7)<key)date=nextDue(date,Number(bill.due.slice(-2)));
+   if(date!==bill.due&&date.startsWith(key))due.push({...bill,due:date,paid:'',paidTime:'',mode:bill.autopay?bill.mode:'',otherMode:bill.autopay?bill.otherMode:''});
+  }
+ }
+ if(demo&&monthOffset!==0&&Math.abs(monthOffset)<=3){
+  for(const [index,bill] of sample.slice(0,3).entries()){
+   const date=key+'-'+String(5+index*7).padStart(2,'0');
+   due.push({...bill,due:date,paid:monthOffset<0&&index<2?date:'',mode:monthOffset<0&&index<2?sampleMethods[index]:''});
+  }
+ }
+ const sum=items=>money.format(items.reduce((total,b)=>total+(b.amount??0),0));
+ find('month-summary').textContent='Paid '+sum(due.filter(b=>b.paid))+' · Unpaid '+sum(due.filter(b=>!b.paid))+' · '+due.length+(due.length===1?' bill':' bills')+' due'+(due.some(b=>b.amount==null)?' · Some amounts pending':'');
+ return due;
+}
+find('prev').onclick=()=>{monthOffset--;render();};
+find('next').onclick=()=>{monthOffset++;render();};
+find('month').onclick=()=>{monthOffset=0;render();};
+function nextDue(due,day){
+ const date=new Date(due+'T00:00:00Z');
+ date.setUTCDate(1);
+ date.setUTCMonth(date.getUTCMonth()+1);
+ const end=new Date(date);
+ end.setUTCMonth(end.getUTCMonth()+1,0);
+ date.setUTCDate(Math.min(day,end.getUTCDate()));
+ return date.toISOString().slice(0,10);
+}
+function extendSeries(records){
+ const last=new Map();
+ for(const bill of records){
+  if(bill.series&&(!last.has(bill.series)||last.get(bill.series).due<bill.due))last.set(bill.series,bill);
+ }
+ const horizon=new Date(todayPH().slice(0,7)+'-01T00:00:00Z');
+ horizon.setUTCMonth(horizon.getUTCMonth()+12);
+ const limit=horizon.toISOString().slice(0,7);
+ const result=[...records];
+ for(const bill of last.values()){
+  if(!bill.recurring)continue;
+  let due=nextDue(bill.due,bill.anchor);
+  while(due.slice(0,7)<=limit){
+   result.push({...bill,due,amount:Object.hasOwn(bill,'baseAmount')?bill.baseAmount:bill.amount,paid:'',paidTime:'',mode:bill.autopay?bill.mode:'',otherMode:bill.autopay?bill.otherMode:''});
+   due=nextDue(due,bill.anchor);
+  }
+ }
+ return result;
+}
+function deleteBill(bill){
+ if(!bill||!bills.includes(bill))return;
+ const warning=bill.series?' Future unpaid occurrences will also be removed.':'';
+ if(!window.confirm('Delete '+bill.name+' · '+bill.due+'?'+warning))return;
+ const retained=bills.filter(b=>b!==bill&&!(bill.series&&b.series===bill.series&&b.due>bill.due&&!b.paid));
+ if(!commit(bill.series?stopSeries(retained,bill.series):retained))return;
+ form.hidden=true;render();feedback('Bill deleted.');
+}
+function visibleBills(key){
+ return bills.filter(b=>b.recurring?b.due.startsWith(key):monthOffset===0||b.due.startsWith(key));
+}
+function openDefaultView(){
+ const visible=visibleBills(selectedMonth().toISOString().slice(0,7));
+ const late=visible.some(b=>!b.paid&&b.due<todayPH());
+ const upcoming=visible.some(b=>!b.paid&&b.due>=todayPH());
+ const tab=late?'late':'upcoming';
+ root.querySelector('[data-view="'+tab+'"]').click();
+}
+let listLimit=50;
+function isUrgent(b){return !b.paid&&b.due<=todayPH();}
+function render(){
+ const reminders=find('reminders');
+ const today=todayPH(),tomorrow=dateOffset(1);
+ const dueSoon=ownBills.filter(b=>!b.paid&&(b.due===today||b.due===tomorrow));
+ reminders.replaceChildren();reminders.hidden=demo||!dueSoon.length;
+ for(const bill of dueSoon){
+  const line=document.createElement('div');
+  line.textContent=(bill.due===today?'Due today':'Due tomorrow')+' · '+bill.name+' · '+displayAmount(bill.amount);
+  reminders.append(line);
+ }
+
+ const unpaid=renderMonth().filter(b=>!b.paid);
+ find('total').textContent=money.format(unpaid.reduce((sum,b)=>sum+(b.amount??0),0));
+ find('caption').textContent=unpaid.length+' unpaid '+(unpaid.length===1?'bill':'bills');
+ const key=selectedMonth().toISOString().slice(0,7);
+ const visible=visibleBills(key);
+ let shown=visible.filter(b=>view==='all'||(view==='upcoming'&&!b.paid&&b.due>=todayPH())||(view==='paid'&&b.paid)||(view==='late'&&['Overdue','Paid late'].includes(status(b))));
+ shown.sort((a,b)=>Number(Boolean(a.paid))-Number(Boolean(b.paid))||(a.paid&&b.paid?b.paid.localeCompare(a.paid):a.due.localeCompare(b.due)));
+ find('list').replaceChildren();
+ const totalShown=shown.length;
+ shown=shown.slice(0,listLimit);
+ if(totalShown>listLimit){
+  const more=document.createElement('button');
+  more.type='button';more.textContent='Show more bills ('+totalShown+' total)';
+  more.onclick=()=>{listLimit+=50;render();};
+  find('list').append(more);
+ }
+ if(view==='all'){
+  const list=find('list');
+  if(!bills.length){
+   list.append(...categoryTiles());
+  }else{
+   const urgent=shown.filter(isUrgent);
+   const rest=shown.filter(b=>!isUrgent(b));
+   for(const [label,items,style] of [['Urgent payment',urgent,'urgent'],['Your bills',rest,'']]){
+    if(!items.length)continue;
+    const group=document.createElement('section'), title=document.createElement('h3');
+    group.className=style;title.textContent=label;group.append(title);
+    for(const bill of items)group.append(billRow(bill));
+    list.append(group);
+   }
+  }
+  return;
+ }
+ if(!shown.length) find('list').textContent='No bills in this view.';
+ const list=find('list');
+ if(view==='late'&&shown.length){
+  const group=document.createElement('section');group.className='urgent';
+  for(const b of shown)group.append(billRow(b));
+  list.append(group);
+ }else{
+  for(const b of shown){
+   const row=billRow(b);
+   if(isUrgent(b))row.classList.add('urgent');
+   list.append(row);
+  }
+ }
+}
+function billRow(b){
+ const row=document.createElement('article'), action=document.createElement('button'), meta=document.createElement('div'), details=document.createElement('small');
+ action.textContent=b.name;
+ if(b.recurring){
+  const icon=document.createElement('span');
+  icon.className='recurring-icon';icon.title='Recurring monthly';
+  icon.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="18" rx="3"/><path d="M2 8h20M7 2v4m10-4v4M7 15v-1a1 1 0 0 1 1-1h8m-2-2 2 2-2 2m3 1v1a1 1 0 0 1-1 1H8m2-2-2 2 2 2"/></svg>';
+  action.append(' ',icon);
+ }
+ action.setAttribute('aria-label','View or edit '+b.name+(b.recurring?', recurring monthly':''));
+ action.onclick=()=>open(b);
+ meta.textContent=displayAmount(b.amount);
+ const days=(Date.parse(b.due)-Date.parse(todayPH()))/86400000;
+ const dueLabel=days===0?'Due today':days===1?'Due tomorrow':days>1?'Due in '+days+' days':'Overdue';
+ details.textContent=b.paid?status(b)+' · '+date(b.paid)+(b.paidTime?' '+b.paidTime:'')+' · '+(b.mode==='Other'&&b.otherMode?b.otherMode:b.mode):dueLabel+' · '+date(b.due);
+ if(b.autopay){
+  const autopayNote=document.createElement('small');
+  autopayNote.textContent='Autopay · '+(b.mode==='Other'&&b.otherMode?b.otherMode:b.mode);
+  meta.append(autopayNote);
+ }
+ if(b.paid)row.className='paid-bill';
+ if(status(b)==='Overdue')details.className='late';
+ const controls=document.createElement('div'), actions=document.createElement('span');
+ controls.className='bill-controls';actions.className='bill-actions';
+ const menu=document.createElement('details'), trigger=document.createElement('summary');
+ trigger.textContent='⋯';trigger.setAttribute('aria-label','Bill actions for '+b.name);menu.append(trigger);
+ const rowActions=[['Delete',()=>deleteBill(b)]];
+ rowActions.unshift(['Edit',()=>open(b)]);
+ if(!b.paid)rowActions.unshift(['Mark as paid',()=>{
+  open(b);form.elements.paid.value=todayPH();capturePaymentTime();form.elements.mode.focus();
+ }]);
+ for(const [label,handler] of rowActions){
+  const button=document.createElement('button');
+  button.type='button';button.textContent=label;button.dataset.action=label;
+  button.setAttribute('aria-label',label+' '+b.name);button.onclick=handler;
+  if(label==='Mark as paid')actions.append(button);else menu.append(button);
+ }
+ const swipeDelete=document.createElement('button');
+ swipeDelete.type='button';swipeDelete.className='swipe-delete';swipeDelete.hidden=true;
+ swipeDelete.textContent='Delete';swipeDelete.setAttribute('aria-label','Delete '+b.name);
+ swipeDelete.onclick=()=>{swipeDelete.hidden=true;deleteBill(b);};
+ row.classList.add('swipe-row');
+ row.addEventListener('pointerdown',event=>{
+  if(!event.isPrimary||event.button!==0)return;
+  const x=event.clientX,y=event.clientY,id=event.pointerId;
+  const finish=event=>{
+   if(event.pointerId!==id)return;
+   row.removeEventListener('pointerup',finish);
+   row.removeEventListener('pointercancel',finish);
+   if(event.type==='pointercancel')return;
+   const dx=event.clientX-x,dy=event.clientY-y;
+   if(Math.abs(dx)<42||Math.abs(dx)<1.5*Math.abs(dy))return;
+   swipeDelete.hidden=dx>0;
+   const guard=click=>{click.preventDefault();click.stopPropagation();};
+   row.addEventListener('click',guard,{capture:true,once:true});
+   setTimeout(()=>row.removeEventListener('click',guard,true),0);
+  };
+  row.addEventListener('pointerup',finish);
+  row.addEventListener('pointercancel',finish);
+ });
+ row.append(swipeDelete);
+ actions.append(menu);
+ controls.append(action,actions);
+ meta.append(details);row.append(controls,meta);return row;
+}
+function options(){
+ const names=catalog[category.value];
+ find('search-label').hidden=names.length<4;
+ const query=find('search-label').hidden?'':find('search').value.toLowerCase();
+ find('options').replaceChildren();
+ for(const name of names.filter(n=>n.toLowerCase().includes(query))){
+ const option=document.createElement('button');
+ option.type='button';option.textContent=name;
+ option.onclick=()=>{chosen=name;find('choice').textContent=name;find('name').value='';find('custom-label').hidden=true;find('picker').open=false;};
+ find('options').append(option);
+ }
+}
+function capturePaymentTime(){
+ const now=new Date();
+ const pad=value=>String(value).padStart(2,'0');
+ form.elements.paidTime.value=form.elements.paid.value?pad(now.getHours())+':'+pad(now.getMinutes()):'';
+}
+form.elements.paid.addEventListener('input',capturePaymentTime);
+function updateOtherMode(){
+ const active=form.elements.mode.value==='Other';
+ find('other-mode').hidden=!active;
+ form.elements.otherMode.disabled=!active;
+}
+form.elements.mode.addEventListener('change',updateOtherMode);
+function open(b){
+
+ const recurring=Boolean(b?.recurring);
+ category.disabled=recurring;
+ find('picker').hidden=recurring;
+ form.elements.due.readOnly=recurring;
+ form.elements.amount.readOnly=false;
+ form.elements.recurring.disabled=recurring;
+ find('categories').hidden=true;
+ editing=b;find('delete').hidden=!b;form.reset();chosen=b?.name||'';
+ category.value=b?.category||'Water';find('choice').textContent=chosen||'Choose biller';
+ find('custom-label').hidden=true;find('picker').open=false;
+ find('title').textContent=recurring?b.name:b?'Bill details':'Add bill';find('error').textContent='';
+ form.elements.amount.value=b?.amount||'';form.elements.due.value=b?.due||'';
+ form.elements.recurring.checked=Boolean(b?.recurring);
+ form.elements.paid.value=b?.paid||'';form.elements.paidTime.value=b?.paidTime||'';form.elements.mode.value=b?.mode||'';
+ form.elements.autopay.checked=b?.autopay===true;
+ form.elements.otherMode.value=b?.otherMode||'';updateOtherMode();
+ options();form.hidden=false;form.scrollIntoView({block:'start',behavior:'smooth'});(recurring?(form.elements.amount.readOnly?form.elements.paid:form.elements.amount):category).focus();
+}
+category.onchange=()=>{chosen='';find('choice').textContent='Choose biller';find('name').value='';find('search').value='';find('custom-label').hidden=true;options();};
+find('search').oninput=options;
+find('custom').onclick=()=>{chosen='';find('choice').textContent='Add Biller';find('custom-label').hidden=false;find('name').focus();};
+function openCategories(){
+ const panel=find('categories');
+ const cancel=document.createElement('button');
+ cancel.textContent='Cancel';cancel.type='button';
+ cancel.onclick=()=>{panel.hidden=true;find('add').focus();};
+ panel.replaceChildren(...categoryTiles(),cancel);
+ form.hidden=true;panel.hidden=false;
+ panel.scrollIntoView({block:'start',behavior:'smooth'});
+ panel.querySelector('input').focus({preventScroll:true});
+}
+find('add').onclick=openCategories;
+find('home').onclick=()=>{
+ monthOffset=0;form.hidden=true;find('categories').hidden=true;
+ openDefaultView();
+};
+let savedTimer;
+function showSaved(){
+ clearTimeout(savedTimer);
+ find('feedback').hidden=true;
+ find('saved').textContent='SAVED!';
+ savedTimer=setTimeout(()=>{find('saved').textContent='';},5000);
+}
+const feedback=(message)=>{
+ find('feedback').hidden=false;find('feedback').textContent=message;
+};
+find('help').onclick=()=>{
+ const guide=find('guide');
+ guide.hidden=!guide.hidden;
+ find('help').setAttribute('aria-expanded',String(!guide.hidden));
+};
+find('delete').onclick=()=>deleteBill(editing);
+function stopSeries(records,series){
+ return records.map(b=>b.series===series?{...b,series:undefined}:b);
+}
+function makeBackupFile(){
+ return new File([JSON.stringify({version:1,bills},null,2)],'BantayBayad-PH-backup.json',{type:'application/json'});
+}
+function downloadBackup(file){
+ const url=URL.createObjectURL(file);
+ const link=document.createElement('a');
+ link.href=url;link.download=file.name;root.append(link);link.click();link.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),60000);
+ feedback('If a file preview opens, tap Share, then Save to Files or Drive.');
+}
+find('download').onclick=()=>downloadBackup(makeBackupFile());
+find('share-backup').onclick=async()=>{
+ if(demo)return;
+ const file=makeBackupFile();
+ try{
+  if(navigator.canShare?.({files:[file]})){
+   await navigator.share({files:[file],title:'BantayBayad backup'});
+   feedback('Backup handed to your selected app.');
+  }else{
+   downloadBackup(file);
+  }
+ }catch(error){
+  if(error.name==='AbortError'){feedback('Backup sharing cancelled.');return;}
+  feedback('Sharing could not open. Tap Download Backup, then use Share in the file preview to save it.');
+ }
+};
+let pendingBackup=null;
+function resetImport(){
+ pendingBackup=null;find('file').value='';find('restore').hidden=true;
+ find('import-status').textContent='';find('import').hidden=true;
+}
+find('upload').onclick=()=>{resetImport();find('import').hidden=false;find('file').focus();};
+find('import-cancel').onclick=()=>{resetImport();find('upload').focus();};
+const isDate=value=>typeof value==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(value)&&
+ Number.isFinite(Date.parse(value))&&new Date(value).toISOString().slice(0,10)===value;
+const modes=Array.from(form.elements.mode.options).slice(1).map(option=>option.value);
+function readBackupFile(file){
+ return new Promise((resolve,reject)=>{
+  const reader=new FileReader();
+  const timer=setTimeout(()=>{
+   reader.abort();
+   reject(new Error('Reading timed out. In Files, download the backup to On My iPhone, then select it again.'));
+  },15000);
+  reader.onload=()=>{clearTimeout(timer);resolve(reader.result);};
+  reader.onerror=()=>{clearTimeout(timer);reject(new Error('Could not open this file. Download it to your device and try again.'));};
+  reader.onabort=()=>{clearTimeout(timer);reject(new Error('Reading timed out. In Files, download the backup to On My iPhone, then select it again.'));};
+  reader.readAsText(file);
+ });
+}
+find('file').onchange=async()=>{
+ const file=find('file').files[0];
+ pendingBackup=null;find('restore').hidden=true;
+ find('import-status').textContent=file?'Reading backup file…':'';
+ if(!file)return;
+ try{
+  if(file.size>1000000)throw new Error('This backup is larger than 1 MB.');
+  const backup=JSON.parse((await readBackupFile(file)).replace(/^\uFEFF/,''));
+  if(backup?.version!==1||!Array.isArray(backup.bills)||backup.bills.length>5000)throw new Error();
+  const restored=backup.bills.map(b=>{
+   if(!b||typeof b.name!=='string'||!b.name.trim()||b.name.length>45||/[0-9]{6,}|@|(?:\d[ -]*){9}/.test(b.name)||
+      !Object.hasOwn(catalog,b.category)||!(b.amount==null||b.amount===''||(Number.isFinite(b.amount)&&b.amount>0))||
+      !isDate(b.due)||!((b.paid===''&&(b.mode===''||(b.autopay===true&&modes.includes(b.mode))))||(isDate(b.paid)&&modes.includes(b.mode))))throw new Error();
+   return {name:b.name.trim(),category:b.category,amount:b.amount==null||b.amount===''?null:b.amount,due:b.due,paid:b.paid,paidTime:b.paid&&typeof b.paidTime==='string'&&/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(b.paidTime)?b.paidTime:'',mode:b.mode,autopay:b.autopay===true,otherMode:b.mode==='Other'&&typeof b.otherMode==='string'?b.otherMode.trim().slice(0,60):'',
+    recurring:b.recurring===true,...(Object.hasOwn(b,'baseAmount')&&(b.baseAmount===null||(Number.isFinite(b.baseAmount)&&b.baseAmount>0))?{baseAmount:b.baseAmount}:{}),series:typeof b.series==='string'&&/^[a-f0-9-]{36}$/.test(b.series)?b.series:undefined,
+    anchor:Number.isInteger(b.anchor)&&b.anchor>=1&&b.anchor<=31?b.anchor:Number(b.due.slice(-2))};
+  });
+  if(find('file').files[0]!==file||demo)return;
+  pendingBackup=restored;
+  find('import-status').textContent=restored.length+' bill(s) found. Restoring will replace all bills in My bills.';
+  find('restore').hidden=false;
+ }catch(error){
+  if(find('file').files[0]!==file)return;
+  find('import-status').textContent=/^(This backup|Reading timed out|Could not open)/.test(error.message)?error.message:'Could not read this backup. Choose the JSON file downloaded from BantayBayad PH or BantayBayad PH.';
+ }
+};
+find('restore').onclick=()=>{
+ if(demo||!pendingBackup)return;
+ const restored=pendingBackup;
+ if(!commit(restored)){
+  find('import-status').textContent='Could not save the backup to this browser. Your current bills are still in place.';
+  return;
+ }
+ resetImport();
+  for(const b of restored)if(!catalog[b.category].includes(b.name))catalog[b.category].push(b.name);
+  form.hidden=true;listLimit=50;openDefaultView();feedback('Backup restored and saved on this device.');
+
+};
+find('cancel').onclick=()=>{form.hidden=true;find('add').focus();};
+form.onsubmit=e=>{
+ e.preventDefault();
+
+ const custom=find('name').value.trim(), name=custom||chosen;
+ const data=new FormData(form), paid=data.get('paid'), mode=data.get('mode');
+ const paidTime=paid?form.elements.paidTime.value:'';
+ const autopay=form.elements.autopay.checked;
+ const otherMode=mode==='Other'?form.elements.otherMode.value.trim():'';
+ if(!name||/[0-9]{6,}|@|(?:\d[ -]*){9}/.test(custom)){find('error').textContent='Choose a biller or enter a company name without personal details.';return;}
+ if((paid||autopay)&&!mode){find('error').textContent='Choose a payment platform for autopay or a paid bill.';return;}
+ if(!paid&&!autopay&&mode){find('error').textContent='Enter a payment date, or enable Autopay to save its platform.';return;}
+ if(autopay&&mode==='Other'&&!otherMode){find('error').textContent='Enter the autopay platform under Payment method used.';return;}
+ if(editing?.recurring){
+  const amount=readAmount(data.get('amount'));
+  const changed={...editing,amount,paid,paidTime,mode,otherMode,autopay};
+  if(amount!==editing.amount)changed.baseAmount=Object.hasOwn(editing,'baseAmount')?editing.baseAmount:editing.amount;
+  if(!commit(bills.map(b=>b===editing?changed:b)))return;
+  form.hidden=true;render();find('add').focus();showSaved();
+  return;
+ }
+ if(custom&&!catalog[category.value].includes(custom))catalog[category.value].push(custom);
+ const due=data.get('due'), recurring=data.has('recurring');
+ const anchor=editing?.due===due?(editing.anchor??Number(due.slice(-2))):Number(due.slice(-2));
+ const series=recurring&&!demo?(editing?.series||crypto.randomUUID()):undefined;
+ const bill={name,category:category.value,amount:readAmount(data.get('amount')),due,paid,paidTime,mode,otherMode,autopay,recurring,anchor,series};
+ let next=bills.filter(b=>b!==editing&&!(editing?.series&&b.series===editing.series&&b.due>editing.due&&!b.paid));
+ if(editing?.series&&!recurring)next=stopSeries(next,editing.series);
+ next.push(bill);
+ if(!commit(extendSeries(next)))return;
+ form.hidden=true;root.querySelector('[data-view="all"]').click();find('add').focus();showSaved();
+};
+root.querySelectorAll('[data-view]').forEach(btn=>btn.onclick=()=>{
+ find('categories').hidden=true;form.hidden=true;view=btn.dataset.view;root.querySelectorAll('[data-view]').forEach(other=>other.setAttribute('aria-pressed',String(other===btn)));render();
+});
+function showState(isSample){
+ resetImport();demo=isSample;monthOffset=0;
+ bills=demo?sample.map(b=>({...b})):ownBills;
+ find('empty').setAttribute('aria-pressed',String(!demo));
+ find('sample').setAttribute('aria-pressed',String(demo));
+ find('download').disabled=demo;find('share-backup').disabled=demo;find('upload').disabled=demo;
+ form.hidden=true;find('feedback').hidden=true;
+ openDefaultView();
+}
+find('sample').onclick=()=>showState(true);
+find('empty').onclick=()=>showState(false);
+try{
+ const raw=localStorage.getItem(storageKey);
+ ownBills=raw?JSON.parse(raw):[];
+ if(!Array.isArray(ownBills))throw new Error();
+ bills=ownBills;
+ const extended=extendSeries(ownBills);
+ if(extended.length!==ownBills.length)commit(extended);
+ for(const b of bills)if(Object.hasOwn(catalog,b.category)&&!catalog[b.category].includes(b.name))catalog[b.category].push(b.name);
+}catch{ownBills=[];bills=[];feedback('Saved records could not be read. Check your browser storage settings.');}
+const theme=find('theme');
+let mode=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+try{mode=localStorage.getItem('bantaybayad-theme')||mode;}catch{}
+function applyTheme(){
+ document.documentElement.style.colorScheme=mode;root.style.colorScheme=mode;
+ theme.textContent=mode==='dark'?'☀':'☾';
+ theme.setAttribute('aria-label',mode==='dark'?'Switch to light mode':'Switch to dark mode');
+}
+theme.onclick=()=>{
+ mode=mode==='dark'?'light':'dark';applyTheme();
+ try{localStorage.setItem('bantaybayad-theme',mode);}catch{}
+};
+applyTheme();
+openDefaultView();
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)render();});
+let lastReminderDay=todayPH();
+setInterval(()=>{if(!document.hidden&&todayPH()!==lastReminderDay){lastReminderDay=todayPH();render();}},60000);
+if('serviceWorker'  in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+})();
+</script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "0ae95c89f4544a9986fb80032d711bfc"}'></script><!-- End Cloudflare Web Analytics -->
+</body></html>
